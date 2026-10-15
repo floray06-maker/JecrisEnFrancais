@@ -236,6 +236,15 @@ function nr_pages_jour_doublons() {
    Sur « init » et non « plugins_loaded » : la création de page a besoin des permaliens, prêts seulement à ce moment. */
 add_action( 'init', 'nr_mise_a_jour', 1 );
 function nr_mise_a_jour() {
+	try {
+		nr_mise_a_jour_etapes();
+	} catch ( \Throwable $e ) {
+		// Une mise à jour ratée ne doit jamais bloquer le site : on note l'erreur et on réessaiera au chargement suivant.
+		error_log( 'Nos réussites, mise à jour : ' . $e->getMessage() ); // phpcs:ignore
+	}
+}
+
+function nr_mise_a_jour_etapes() {
 	if ( NR_DB !== get_option( 'nr_db' ) ) {
 		nr_activation();
 	}
