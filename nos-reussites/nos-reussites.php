@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Nos réussites. Activités UPE2A
  * Description:       Activités en autonomie sur téléphone pour les élèves allophones (UPE2A NSA). L'élève entre son prénom ; le prénom choisit le parcours. Réponses et lectures enregistrées pour l'enseignant, qui diffuse l'activité du jour, valide le travail et envoie un retour lu à l'élève.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            M. Kongolo
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'NR_VERSION', '1.1.0' );
+define( 'NR_VERSION', '1.1.1' );
 define( 'NR_DB', '2' );
 define( 'NR_DIR', plugin_dir_path( __FILE__ ) );
 define( 'NR_URL', plugin_dir_url( __FILE__ ) );
@@ -200,11 +200,51 @@ function nr_activation() {
 	update_option( 'nr_db', NR_DB, false );
 }
 
-/* Mise à jour de l'extension sans réactivation : nouvelles colonnes, page « Activité du jour ». */
-add_action( 'plugins_loaded', 'nr_mise_a_jour' );
+/**
+ * La version 1.1.0 créait une page « Activité du jour » à chaque chargement du site (erreur critique pendant la création).
+ * On garde la plus ancienne et on met les autres à la corbeille. Renvoie l'identifiant de la page gardée.
+ */
+function nr_pages_jour_doublons() {
+	$pages = get_posts(
+		array(
+			'post_type'      => 'page',
+			'post_status'    => array( 'publish', 'draft', 'private' ),
+			'title'          => 'Activité du jour',
+			'orderby'        => 'ID',
+			'order'          => 'ASC',
+			'posts_per_page' => -1,
+		)
+	);
+	$garde = 0;
+	foreach ( $pages as $p ) {
+		if ( false === strpos( $p->post_content, '[nos_reussites activite="jour"]' ) ) {
+			continue;
+		}
+		if ( ! $garde ) {
+			$garde = (int) $p->ID;
+			if ( 'activite-du-jour' !== $p->post_name || 'publish' !== $p->post_status ) {
+				wp_update_post( array( 'ID' => $garde, 'post_name' => 'activite-du-jour', 'post_status' => 'publish' ) );
+			}
+		} else {
+			wp_trash_post( $p->ID );
+		}
+	}
+	return $garde;
+}
+
+/* Mise à jour de l'extension sans réactivation : nouvelles colonnes, page « Activité du jour ».
+   Sur « init » et non « plugins_loaded » : la création de page a besoin des permaliens, prêts seulement à ce moment. */
+add_action( 'init', 'nr_mise_a_jour', 1 );
 function nr_mise_a_jour() {
 	if ( NR_DB !== get_option( 'nr_db' ) ) {
 		nr_activation();
+	}
+	if ( ! get_option( 'nr_doublons_nettoyes' ) ) {
+		$id = nr_pages_jour_doublons();
+		if ( $id ) {
+			update_option( 'nr_page_jour', $id );
+		}
+		update_option( 'nr_doublons_nettoyes', 1, false );
 	}
 }
 
@@ -214,6 +254,13 @@ function nr_creer_page( $activite ) {
 	$id  = (int) get_option( $opt );
 	if ( $id && get_post_status( $id ) && 'trash' !== get_post_status( $id ) ) {
 		return $id;
+	}
+	if ( 'jour' === $activite ) {
+		$id = nr_pages_jour_doublons();
+		if ( $id ) {
+			update_option( $opt, $id );
+			return $id;
+		}
 	}
 	$id = wp_insert_post(
 		array(
