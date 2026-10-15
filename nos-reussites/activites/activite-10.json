@@ -1,0 +1,210 @@
+{
+  "id": "10",
+  "titre": "Activité 10",
+  "duree": "1 h 30",
+  "parcours": {
+    "1": {
+      "titre": "Je lis les majuscules.",
+      "ecrans": [
+        {
+          "id": "lettres_a", "num": 1, "icone": "coche", "type": "choix", "forme": "lettres",
+          "consigne": "Je coche la même lettre.",
+          "items": [
+            {"modele": "A", "options": ["a", "o", "e", "u"], "bonne": 0, "exemple": true},
+            {"modele": "E", "options": ["c", "e", "o", "a"], "bonne": 1},
+            {"modele": "I", "options": ["j", "t", "f", "i"], "bonne": 3},
+            {"modele": "O", "options": ["a", "c", "o", "e"], "bonne": 2},
+            {"modele": "U", "options": ["u", "n", "v", "y"], "bonne": 0},
+            {"modele": "Y", "options": ["v", "g", "j", "y"], "bonne": 3},
+            {"modele": "M", "options": ["n", "m", "w", "u"], "bonne": 1}
+          ]
+        },
+        {
+          "id": "lettres_b", "num": 1, "icone": "coche", "type": "choix", "forme": "lettres",
+          "consigne": "Je coche la même lettre.",
+          "items": [
+            {"modele": "L", "options": ["i", "t", "l", "f"], "bonne": 2},
+            {"modele": "R", "options": ["r", "n", "v", "x"], "bonne": 0},
+            {"modele": "S", "options": ["z", "c", "e", "s"], "bonne": 3},
+            {"modele": "T", "options": ["f", "t", "l", "i"], "bonne": 1},
+            {"modele": "P", "options": ["q", "b", "d", "p"], "bonne": 3},
+            {"modele": "N", "options": ["m", "u", "n", "r"], "bonne": 2},
+            {"modele": "D", "options": ["b", "d", "p", "q"], "bonne": 1}
+          ]
+        },
+        {
+          "id": "dessins", "num": 2, "icone": "lis", "type": "choix", "forme": "dessins",
+          "consigne": "Je lis le mot. Je coche le dessin.",
+          "items": [
+            {"modele": "TOMATE", "options": ["tomate", "pile", "pomme"], "bonne": 0, "exemple": true, "dire": "la tomate"},
+            {"modele": "POMME", "options": ["sardine", "pomme", "tarte"], "bonne": 1, "dire": "la pomme"},
+            {"modele": "SARDINE", "options": ["limonade", "tarte", "sardine"], "bonne": 2, "dire": "la sardine"},
+            {"modele": "PILE", "options": ["pile", "tomate", "limonade"], "bonne": 0, "dire": "la pile"},
+            {"modele": "TARTE", "options": ["pomme", "tarte", "sardine"], "bonne": 1, "dire": "la tarte"},
+            {"modele": "LIMONADE", "options": ["tarte", "pile", "limonade"], "bonne": 2, "dire": "la limonade"}
+          ]
+        },
+        {
+          "id": "minuscules", "num": 3, "icone": "ecris", "type": "saisie", "casse": true, "clavier": "min",
+          "consigne": "Je lis. J'écris le mot en minuscules.",
+          "items": [
+            {"gauche": "MIDI", "reponses": ["midi"], "exemple": true},
+            {"gauche": "SAMEDI", "reponses": ["samedi"]},
+            {"gauche": "MOTO", "reponses": ["moto"]},
+            {"gauche": "SALLE", "reponses": ["salle"]},
+            {"gauche": "RADIO", "reponses": ["radio"]},
+            {"gauche": "MENU", "reponses": ["menu"]},
+            {"gauche": "STYLO", "reponses": ["stylo"]}
+          ]
+        },
+        {
+          "id": "syllabes", "num": 4, "icone": "lis", "type": "saisie", "clavier": "min", "syllabes": true,
+          "consigne": "Je lis les syllabes. J'écris le mot.",
+          "items": [
+            {"gauche": "mar   di", "reponses": ["mardi"], "exemple": true},
+            {"gauche": "no   te", "reponses": ["note"]},
+            {"gauche": "por   te", "reponses": ["porte"]},
+            {"gauche": "te   nue", "reponses": ["tenue"]},
+            {"gauche": "pi   lo   te", "reponses": ["pilote"]},
+            {"gauche": "ta   pis", "reponses": ["tapis"]}
+          ]
+        },
+        {
+          "id": "meme_mot", "num": 5, "icone": "coche", "type": "multi",
+          "consigne": "Je coche le même mot.",
+          "items": [
+            {"modele": "MIDI", "options": ["MIDI", "MARDI", "DIMI", "MIDI"], "bonnes": [0, 3], "exemple": true},
+            {"modele": "SALLE", "options": ["SELLE", "SALLE", "SALE", "SALLE"], "bonnes": [1, 3]},
+            {"modele": "STOP", "options": ["STOP", "SPOT", "STOP", "TOPS"], "bonnes": [0, 2]},
+            {"modele": "MOTO", "options": ["TOMO", "MOTO", "MOTO", "OTOM"], "bonnes": [1, 2]},
+            {"modele": "PILE", "options": ["LIPE", "PILE", "PELE", "PILE"], "bonnes": [1, 3]},
+            {"modele": "RADIO", "options": ["RADIO", "RODIA", "RADIS", "RADIO"], "bonnes": [0, 3]}
+          ]
+        },
+        {
+          "id": "carte", "num": 6, "icone": "ecris", "type": "carte",
+          "consigne": "Je complète ma carte.",
+          "modele": {"titre": "LP VICTOR LALOUX", "valeurs": ["FERRAND", "Lina", "UPE2A"]},
+          "champs": [
+            {"cle": "nom", "label": "NOM", "clavier": "maj"},
+            {"cle": "prenom", "label": "Prénom", "clavier": "mot"},
+            {"cle": "classe", "label": "Classe", "clavier": "maj"}
+          ]
+        },
+        {
+          "id": "oral", "num": 7, "icone": "micro", "type": "oral",
+          "consigne": "Je lis à voix haute. Je m'enregistre.",
+          "mots": ["MIDI", "MARDI", "SAMEDI", "MOTO", "RADIO", "STYLO", "SALLE", "PORTE", "NOTE", "TOMATE", "POMME", "PILE"],
+          "enplus": ["Lina a la moto.", "Timo a le stylo.", "Ana a la radio."]
+        },
+        {"id": "fin", "type": "fin"}
+      ]
+    },
+    "2": {
+      "titre": "Je présente une personne.",
+      "ecrans": [
+        {
+          "id": "badges", "num": 1, "icone": "lis", "type": "choix", "forme": "vf",
+          "consigne": "Je lis les badges. Vrai ou faux ? Je coche.",
+          "support": {"badges": [
+            {"nom": "M. DIALLO", "metier": "vendeur", "lieu": "magasin", "img": "sac"},
+            {"nom": "Mme FAURE", "metier": "cheffe de rayon", "lieu": "magasin", "img": "bloc"},
+            {"nom": "M. KONATÉ", "metier": "infirmier", "lieu": "lycée", "img": "croix"},
+            {"nom": "Mme NGUYEN", "metier": "prothésiste dentaire", "lieu": "laboratoire", "img": "dent"}
+          ]},
+          "items": [
+            {"texte": "M. Diallo est vendeur.", "options": ["vrai", "faux"], "bonne": 0, "exemple": true},
+            {"texte": "Mme Faure est infirmière.", "options": ["vrai", "faux"], "bonne": 1},
+            {"texte": "M. Konaté travaille au lycée.", "options": ["vrai", "faux"], "bonne": 0},
+            {"texte": "Mme Nguyen est prothésiste dentaire.", "options": ["vrai", "faux"], "bonne": 0},
+            {"texte": "M. Diallo travaille au lycée.", "options": ["vrai", "faux"], "bonne": 1},
+            {"texte": "Mme Faure travaille au magasin.", "options": ["vrai", "faux"], "bonne": 0}
+          ]
+        },
+        {
+          "id": "il_elle", "num": 2, "icone": "coche", "type": "choix", "forme": "ligne",
+          "consigne": "Il ou elle ? Je coche.",
+          "items": [
+            {"texte": "___ est vendeur.", "options": ["Il", "Elle"], "bonne": 0, "exemple": true},
+            {"texte": "___ est cheffe de rayon.", "options": ["Il", "Elle"], "bonne": 1},
+            {"texte": "___ est infirmier.", "options": ["Il", "Elle"], "bonne": 0},
+            {"texte": "___ est vendeuse.", "options": ["Il", "Elle"], "bonne": 1},
+            {"texte": "___ est électricienne.", "options": ["Il", "Elle"], "bonne": 1},
+            {"texte": "___ est cuisinier.", "options": ["Il", "Elle"], "bonne": 0},
+            {"texte": "___ est coiffeuse.", "options": ["Il", "Elle"], "bonne": 1},
+            {"texte": "___ est électricien.", "options": ["Il", "Elle"], "bonne": 0}
+          ]
+        },
+        {
+          "id": "feminin", "num": 3, "icone": "ecris", "type": "saisie", "clavier": "min",
+          "consigne": "Je complète.",
+          "support": {"banque": ["photographe", "infirmière", "coiffeuse", "électricienne", "cuisinière"]},
+          "items": [
+            {"gauche": "Il est vendeur.", "prefixe": "Elle est", "reponses": ["vendeuse"], "exemple": true},
+            {"gauche": "Il est infirmier.", "prefixe": "Elle est", "reponses": ["infirmière"]},
+            {"gauche": "Il est cuisinier.", "prefixe": "Elle est", "reponses": ["cuisinière"]},
+            {"gauche": "Il est électricien.", "prefixe": "Elle est", "reponses": ["électricienne"]},
+            {"gauche": "Il est coiffeur.", "prefixe": "Elle est", "reponses": ["coiffeuse"]},
+            {"gauche": "Il est photographe.", "prefixe": "Elle est", "reponses": ["photographe"]}
+          ]
+        },
+        {
+          "id": "c_est", "num": 4, "icone": "coche", "type": "choix", "forme": "ligne",
+          "consigne": "C'est, il est ou elle est ? Je coche.",
+          "items": [
+            {"texte": "___ M. Dubois. Il est agent d'accueil.", "options": ["C'est", "Il est", "Elle est"], "bonne": 0, "exemple": true},
+            {"texte": "C'est M. Dubois. ___ agent d'accueil.", "options": ["C'est", "Il est", "Elle est"], "bonne": 1, "exemple": true},
+            {"texte": "___ Mme Martin. Elle est photographe.", "options": ["C'est", "Il est", "Elle est"], "bonne": 0},
+            {"texte": "C'est Mme Martin. ___ photographe.", "options": ["C'est", "Il est", "Elle est"], "bonne": 2},
+            {"texte": "C'est M. Konaté. ___ infirmier.", "options": ["C'est", "Il est", "Elle est"], "bonne": 1},
+            {"texte": "___ Mme Nguyen. Elle est prothésiste dentaire.", "options": ["C'est", "Il est", "Elle est"], "bonne": 0},
+            {"texte": "C'est Mme Faure. ___ cheffe de rayon.", "options": ["C'est", "Il est", "Elle est"], "bonne": 2}
+          ]
+        },
+        {
+          "id": "presenter", "num": 5, "icone": "ecris", "type": "saisie", "clavier": "phrase",
+          "consigne": "Je présente une personne. J'écris.",
+          "items": [
+            {"bande": {"nom": "M. DIALLO", "metier": "vendeur", "lieu": "magasin", "img": "sac"}, "exemple": true},
+            {"prefixe": "C'est", "reponses": ["M. Diallo", "Monsieur Diallo"], "exemple": true},
+            {"prefixe": "Il est", "reponses": ["vendeur"], "exemple": true},
+            {"prefixe": "Il travaille", "reponses": ["au magasin"], "exemple": true},
+            {"bande": {"nom": "M. KONATÉ", "metier": "infirmier", "lieu": "lycée", "img": "croix"}},
+            {"prefixe": "C'est", "reponses": ["M. Konaté", "Monsieur Konaté"]},
+            {"prefixe": "Il est", "reponses": ["infirmier"]},
+            {"prefixe": "Il travaille", "reponses": ["au lycée", "au lycée Victor Laloux"]},
+            {"bande": {"nom": "Mme NGUYEN", "metier": "prothésiste dentaire", "lieu": "laboratoire", "img": "dent"}},
+            {"prefixe": "C'est", "reponses": ["Mme Nguyen", "Madame Nguyen"]},
+            {"prefixe": "Elle est", "reponses": ["prothésiste dentaire", "prothésiste"]},
+            {"prefixe": "Elle travaille", "reponses": ["au laboratoire"]}
+          ]
+        },
+        {
+          "id": "message", "num": 6, "icone": "lis", "type": "choix", "forme": "ligne",
+          "consigne": "Je lis le message. Je coche la bonne réponse.",
+          "support": {"message": {"de": "Lina", "heure": "18:42", "texte": "Salut Awa ! Je suis en stage au magasin. Mon tuteur, c'est M. Diallo. Il est vendeur. Il est gentil. Je commence à 9 heures. Je finis à 17 heures. Et toi, ça va ?"}},
+          "items": [
+            {"texte": "Lina écrit à …", "options": ["Awa", "M. Diallo", "Mme Faure"], "bonne": 0, "exemple": true},
+            {"texte": "Le tuteur de Lina, c'est …", "options": ["M. Konaté", "M. Diallo", "M. Dubois"], "bonne": 1},
+            {"texte": "Lina commence à …", "options": ["9 heures", "8 heures", "17 heures"], "bonne": 0},
+            {"texte": "Lina finit à …", "options": ["12 heures", "9 heures", "17 heures"], "bonne": 2},
+            {"texte": "Awa, c'est …", "options": ["une tutrice", "une amie"], "bonne": 1}
+          ]
+        },
+        {
+          "id": "reponse", "num": 7, "icone": "ecris", "type": "redaction",
+          "consigne": "Je réponds à Lina. J'écris.",
+          "cadres": ["Salut Lina ! Ça va bien.", "Je suis élève au lycée …", "Mon professeur, c'est M. … / Mme …", "Il / Elle est professeur de …", "Je commence à … heures."]
+        },
+        {
+          "id": "oral", "num": 8, "icone": "micro", "type": "oral",
+          "consigne": "Je lis à voix haute. Je m'enregistre.",
+          "texte": "Salut Awa ! Je suis en stage au magasin. Mon tuteur, c'est M. Diallo. Il est vendeur. Il est gentil. Je commence à 9 heures. Je finis à 17 heures. Et toi, ça va ?",
+          "pauses": true,
+          "enplus_oral": "Je présente une personne de mon lycée."
+        },
+        {"id": "fin", "type": "fin"}
+      ]
+    }
+  }
+}
