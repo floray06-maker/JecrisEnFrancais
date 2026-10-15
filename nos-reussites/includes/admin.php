@@ -1,6 +1,6 @@
 <?php
 /**
- * Administration : prénoms par parcours, résultats, écoute des lectures, export, effacement.
+ * Administration : diffusion de l'activité du jour, prénoms par parcours, résultats, validation et retour de l'enseignant, écoute des lectures, export, effacement.
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -8,8 +8,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 add_action( 'admin_menu', 'nr_menu' );
 function nr_menu() {
-	add_menu_page( 'Nos réussites', 'Nos réussites', 'manage_options', 'nos-reussites', 'nr_page_resultats', 'dashicons-welcome-learn-more', 26 );
-	add_submenu_page( 'nos-reussites', 'Résultats', 'Résultats', 'manage_options', 'nos-reussites', 'nr_page_resultats' );
+	global $wpdb;
+	$n     = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . nr_table() . ' WHERE fini = 1 AND valide = 0' ); // phpcs:ignore
+	$bulle = $n ? ' <span class="awaiting-mod">' . $n . '</span>' : '';
+	add_menu_page( 'Nos réussites', 'Nos réussites' . $bulle, 'manage_options', 'nos-reussites', 'nr_page_resultats', 'dashicons-welcome-learn-more', 26 );
+	add_submenu_page( 'nos-reussites', 'Résultats', 'Résultats' . $bulle, 'manage_options', 'nos-reussites', 'nr_page_resultats' );
+	add_submenu_page( 'nos-reussites', 'Activité du jour', 'Activité du jour', 'manage_options', 'nos-reussites-jour', 'nr_page_jour' );
 	add_submenu_page( 'nos-reussites', 'Élèves', 'Élèves', 'manage_options', 'nos-reussites-eleves', 'nr_page_eleves' );
 }
 
@@ -28,6 +32,9 @@ function nr_admin_css() {
 	.nr-barre{display:inline-block;width:80px;height:8px;background:#e5e5e5;border-radius:4px;vertical-align:middle;margin-right:6px;overflow:hidden}
 	.nr-barre i{display:block;height:100%;background:#0f7a36}
 	.nr-texte{white-space:pre-wrap;background:#fff;border:1px solid #ddd;padding:8px;max-width:640px}
+	.nr-retour{background:#fff;border:1px solid #ccd0d4;border-left:4px solid #2271b1;padding:12px 16px;max-width:720px;margin-top:30px}
+	.nr-retour textarea{width:100%;min-height:110px;font-size:15px}
+	.nr-avalider{color:#b35c00;font-weight:600}
 	</style>';
 }
 
@@ -73,20 +80,87 @@ function nr_page_eleves() {
 	echo '</div><h2>Lecture à voix haute</h2><label><input type="checkbox" name="voix" value="1" ' . checked( ! empty( $r['voix'] ), true, false ) . '> Les élèves enregistrent leur lecture dans l\'application. Sinon, ils l\'envoient par message vocal.</label>';
 	echo '<p class="description">Les fichiers audio sont rangés dans un dossier protégé et effacés avec les résultats de l\'élève. Informer les familles avant usage (données personnelles d\'élèves mineurs).</p>';
 	submit_button( 'Enregistrer' );
-	echo '</form><h2>Pages des activités</h2><table class="widefat striped" style="max-width:720px"><tbody>';
-	foreach ( nr_activites_disponibles() as $act ) {
-		$a  = nr_activite( $act );
-		$id = (int) get_option( 'nr_page_' . $act );
-		echo '<tr><td><strong>' . esc_html( isset( $a['titre'] ) ? $a['titre'] : $act ) . '</strong></td><td>';
-		if ( $id && 'publish' === get_post_status( $id ) ) {
-			$u = get_permalink( $id );
-			echo '<a href="' . esc_url( $u ) . '" target="_blank" rel="noopener">' . esc_html( $u ) . '</a>';
-		} else {
-			echo '<a class="button" href="' . esc_url( nr_lien_action( 'nr_page', array( 'activite' => $act ) ) ) . '">Créer la page</a>';
-		}
-		echo '</td></tr>';
+	echo '</form><h2>Lien à envoyer aux élèves</h2>';
+	nr_lien_page_jour();
+	echo '</div>';
+}
+
+function nr_lien_page_jour() {
+	$id = (int) get_option( 'nr_page_jour' );
+	if ( $id && 'publish' === get_post_status( $id ) ) {
+		$u = get_permalink( $id );
+		echo '<p><a href="' . esc_url( $u ) . '" target="_blank" rel="noopener"><strong>' . esc_html( $u ) . '</strong></a></p>';
+		echo '<p class="description">Ce lien reste le même tous les jours. L\'élève y trouve l\'activité diffusée, ou la précédente s\'il ne l\'a pas finie.</p>';
+	} else {
+		echo '<p><a class="button" href="' . esc_url( nr_lien_action( 'nr_page', array( 'activite' => 'jour' ) ) ) . '">Créer la page « Activité du jour »</a></p>';
 	}
-	echo '</tbody></table><p class="description">Le lien de la page est celui à envoyer aux élèves. Une autre page peut aussi contenir le code court <code>[nos_reussites activite="10"]</code>.</p></div>';
+}
+
+/* ------------------------------------------------------------------ page Activité du jour */
+
+function nr_page_jour() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	$diff = nr_diffusion();
+	echo '<div class="wrap nr-wrap"><h1>Activité du jour</h1>';
+	if ( isset( $_GET['diffuse'] ) ) { // phpcs:ignore
+		echo '<div class="notice notice-success is-dismissible"><p>Activité diffusée.</p></div>';
+	}
+	nr_lien_page_jour();
+	echo '<h2>Diffuser</h2><form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
+	wp_nonce_field( 'nr_diffuser' );
+	echo '<input type="hidden" name="action" value="nr_diffuser"><select name="activite">';
+	$deja = wp_list_pluck( $diff, 'id' );
+	foreach ( nr_activites_disponibles() as $act ) {
+		if ( in_array( $act, $deja, true ) ) {
+			continue;
+		}
+		$a = nr_activite( $act );
+		echo '<option value="' . esc_attr( $act ) . '">' . esc_html( $a['titre'] . ( isset( $a['parcours']['1']['titre'] ) ? ' (' . $a['parcours']['1']['titre'] . ' / ' . $a['parcours']['2']['titre'] . ')' : '' ) ) . '</option>';
+	}
+	echo '</select> ';
+	submit_button( 'Diffuser aujourd\'hui', 'primary', 'submit', false );
+	echo '<p class="description">Les élèves ne voient que les activités diffusées. Chaque activité est obligatoire : un élève qui n\'a pas fini une activité diffusée la retrouve avant la suivante.</p></form>';
+	echo '<h2>Activités diffusées</h2><table class="widefat striped" style="max-width:720px"><thead><tr><th>Activité</th><th>Diffusée le</th><th></th></tr></thead><tbody>';
+	if ( ! $diff ) {
+		echo '<tr><td colspan="3" class="nr-vide">Aucune. Les élèves voient « Pas d\'activité aujourd\'hui ».</td></tr>';
+	}
+	foreach ( $diff as $i => $x ) {
+		$a = nr_activite( $x['id'] );
+		echo '<tr><td><strong>' . esc_html( $a['titre'] ) . '</strong>' . ( count( $diff ) - 1 === $i ? ' (activité du jour)' : '' ) . '</td><td>' . esc_html( $x['date'] ? mysql2date( 'd/m/Y', $x['date'] ) : '' ) . '</td>';
+		echo '<td><a href="' . esc_url( nr_lien_action( 'nr_retirer', array( 'activite' => $x['id'] ) ) ) . '" onclick="return confirm(\'Retirer cette activité ? Les résultats sont conservés.\')">Retirer</a></td></tr>';
+	}
+	echo '</tbody></table></div>';
+}
+
+add_action( 'admin_post_nr_diffuser', 'nr_post_diffuser' );
+function nr_post_diffuser() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( 'Accès refusé.' );
+	}
+	check_admin_referer( 'nr_diffuser' );
+	$act = isset( $_POST['activite'] ) ? preg_replace( '/[^a-z0-9\-]/', '', sanitize_key( wp_unslash( $_POST['activite'] ) ) ) : '';
+	if ( nr_activite( $act ) && ! nr_diffusee( $act ) ) {
+		$d   = nr_diffusion();
+		$d[] = array( 'id' => $act, 'date' => current_time( 'Y-m-d' ) );
+		update_option( 'nr_diffusion', $d, false );
+	}
+	nr_creer_page( 'jour' );
+	wp_safe_redirect( nr_url_admin( 'nos-reussites-jour', array( 'diffuse' => 1 ) ) );
+	exit;
+}
+
+add_action( 'admin_post_nr_retirer', 'nr_post_retirer' );
+function nr_post_retirer() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( 'Accès refusé.' );
+	}
+	check_admin_referer( 'nr_retirer' );
+	$act = isset( $_GET['activite'] ) ? sanitize_key( wp_unslash( $_GET['activite'] ) ) : '';
+	update_option( 'nr_diffusion', array_values( array_filter( nr_diffusion(), function ( $x ) use ( $act ) { return $x['id'] !== $act; } ) ), false );
+	wp_safe_redirect( nr_url_admin( 'nos-reussites-jour' ) );
+	exit;
 }
 
 add_action( 'admin_post_nr_reglages', 'nr_post_reglages' );
@@ -118,10 +192,10 @@ function nr_post_page() {
 	}
 	check_admin_referer( 'nr_page' );
 	$act = isset( $_GET['activite'] ) ? preg_replace( '/[^a-z0-9\-]/', '', sanitize_key( wp_unslash( $_GET['activite'] ) ) ) : '';
-	if ( nr_activite( $act ) ) {
+	if ( nr_page_valide( $act ) ) {
 		nr_creer_page( $act );
 	}
-	wp_safe_redirect( nr_url_admin( 'nos-reussites-eleves' ) );
+	wp_safe_redirect( wp_get_referer() ? wp_get_referer() : nr_url_admin( 'nos-reussites-eleves' ) );
 	exit;
 }
 
@@ -165,7 +239,13 @@ function nr_page_resultats() {
 	if ( isset( $_GET['efface'] ) ) { // phpcs:ignore
 		echo '<div class="notice notice-success is-dismissible"><p>Effacé.</p></div>';
 	}
-	echo '<table class="widefat striped"><thead><tr><th>Prénom</th><th>Parcours</th><th>Avancée</th><th>Réussite</th><th>Fini</th><th>Ressenti</th><th>Voix</th><th>Dernière activité</th><th></th></tr></thead><tbody>';
+	if ( isset( $_GET['retour'] ) ) { // phpcs:ignore
+		echo '<div class="notice notice-success is-dismissible"><p>Retour envoyé. L\'élève l\'entendra à sa prochaine connexion.</p></div>';
+	}
+	if ( ! nr_diffusee( $act ) ) {
+		echo '<div class="notice notice-info"><p>Cette activité n\'est pas diffusée. <a href="' . esc_url( nr_url_admin( 'nos-reussites-jour' ) ) . '">Diffuser</a></p></div>';
+	}
+	echo '<table class="widefat striped"><thead><tr><th>Prénom</th><th>Parcours</th><th>Avancée</th><th>Réussite</th><th>Fini</th><th>Ressenti</th><th>Voix</th><th>Enseignant</th><th>Dernière activité</th><th></th></tr></thead><tbody>';
 	$eleves = nr_eleves();
 	$vus    = array();
 	foreach ( $eleves as $cle => $e ) {
@@ -178,7 +258,7 @@ function nr_page_resultats() {
 		}
 	}
 	if ( ! $eleves && ! $par ) {
-		echo '<tr><td colspan="9">Aucun élève. <a href="' . esc_url( nr_url_admin( 'nos-reussites-eleves' ) ) . '">Ajouter des prénoms</a>.</td></tr>';
+		echo '<tr><td colspan="10">Aucun élève. <a href="' . esc_url( nr_url_admin( 'nos-reussites-eleves' ) ) . '">Ajouter des prénoms</a>.</td></tr>';
 	}
 	echo '</tbody></table>';
 	if ( $par ) {
@@ -199,7 +279,7 @@ function nr_ligne_resultat( $act, $a, $cle, $prenom, $parcours, $l ) {
 	$n = nr_nb_ecrans( $a, $parcours );
 	echo '<tr><td><strong>' . esc_html( $prenom ) . '</strong></td><td>' . esc_html( $parcours ) . '</td>';
 	if ( ! $l || ( '' === (string) $l['etat'] && '' === (string) $l['voix'] ) ) {
-		echo '<td colspan="6" class="nr-vide">Pas commencé</td><td>';
+		echo '<td colspan="7" class="nr-vide">Pas commencé</td><td>';
 		if ( $l ) {
 			echo '<a href="' . esc_url( nr_lien_action( 'nr_effacer', array( 'activite' => $act, 'eleve' => $cle ) ) ) . '">Effacer</a>';
 		}
@@ -213,9 +293,20 @@ function nr_ligne_resultat( $act, $a, $cle, $prenom, $parcours, $l ) {
 	echo '<td>' . ( $l['fini'] ? '<span class="nr-ok">oui</span>' : '' ) . '</td>';
 	echo '<td>' . ( $l['autoeval'] ? '<img class="nr-face" alt="' . esc_attr( $l['autoeval'] ) . '" src="' . esc_url( NR_URL . 'assets/img/face_' . $l['autoeval'] . '.png' ) . '">' : '' ) . '</td>';
 	echo '<td>' . ( $voix ? (int) $voix : '' ) . '</td>';
+	echo '<td>' . nr_etat_enseignant( $l ) . '</td>';
 	echo '<td>' . esc_html( $l['maj'] ? mysql2date( 'd/m/Y H:i', $l['maj'] ) : '' ) . '</td>';
 	echo '<td><a class="button button-small" href="' . esc_url( nr_url_admin( 'nos-reussites', array( 'activite' => $act, 'eleve' => $cle ) ) ) . '">Voir</a> ';
 	echo '<a href="' . esc_url( nr_lien_action( 'nr_effacer', array( 'activite' => $act, 'eleve' => $cle ) ) ) . '" onclick="return confirm(\'Effacer le travail de cet élève ?\')" style="color:#b32d2e">Effacer</a></td></tr>';
+}
+
+function nr_etat_enseignant( $l ) {
+	if ( 1 === (int) $l['valide'] ) {
+		return '<span class="nr-ok">validé</span>' . ( (int) $l['retour_lu'] ? ', retour écouté' : '' );
+	}
+	if ( 2 === (int) $l['valide'] ) {
+		return '<span class="nr-ko">à reprendre</span>' . ( (int) $l['retour_lu'] ? ', retour écouté' : '' );
+	}
+	return (int) $l['fini'] ? '<span class="nr-avalider">à valider</span>' : '';
 }
 
 /* ------------------------------------------------------------------ détail d'un élève */
@@ -312,10 +403,55 @@ function nr_detail( $act, $cle ) {
 			}
 		}
 	}
+	echo '<div class="nr-retour"><h2 style="margin-top:0">Validation et retour</h2><p>État : ' . ( nr_etat_enseignant( $l ) ? nr_etat_enseignant( $l ) : '<span class="nr-vide">en cours</span>' ) . '</p>'; // phpcs:ignore
+	echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
+	wp_nonce_field( 'nr_retour' );
+	echo '<input type="hidden" name="action" value="nr_retour"><input type="hidden" name="activite" value="' . esc_attr( $act ) . '"><input type="hidden" name="eleve" value="' . esc_attr( $cle ) . '">';
+	echo '<p><label for="nr-retour"><strong>Retour à l\'élève</strong></label><br><textarea id="nr-retour" name="retour" maxlength="1000">' . esc_textarea( (string) $l['retour'] ) . '</textarea></p>';
+	echo '<p class="description">Le texte est lu à voix haute à l\'élève à sa prochaine connexion. Phrases courtes, mots connus. Exemple : « Bravo Lina. Tu lis bien les majuscules. Tu relis les mots du 3. »</p><p>';
+	submit_button( 'Valider l\'activité', 'primary', 'decision_valider', false );
+	echo ' ';
+	submit_button( 'À reprendre', 'secondary', 'decision_reprendre', false );
+	echo '</p><p class="description">« À reprendre » rouvre l\'activité : l\'élève la retrouve et doit la terminer avant de passer à la suivante.</p></form></div>';
 	echo '<p style="margin-top:30px"><a href="' . esc_url( nr_lien_action( 'nr_effacer', array( 'activite' => $act, 'eleve' => $cle ) ) ) . '" onclick="return confirm(\'Effacer le travail de cet élève ?\')" style="color:#b32d2e">Effacer le travail de cet élève</a> (il pourra recommencer).</p></div>';
 }
 
 /* ------------------------------------------------------------------ actions */
+
+add_action( 'admin_post_nr_retour', 'nr_post_retour' );
+function nr_post_retour() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( 'Accès refusé.' );
+	}
+	check_admin_referer( 'nr_retour' );
+	$act = isset( $_POST['activite'] ) ? sanitize_key( wp_unslash( $_POST['activite'] ) ) : '';
+	$cle = isset( $_POST['eleve'] ) ? nr_cle( wp_unslash( $_POST['eleve'] ) ) : ''; // phpcs:ignore
+	$l   = nr_ligne( $act, $cle );
+	if ( $l ) {
+		$reprendre = isset( $_POST['decision_reprendre'] );
+		$maj       = array(
+			'valide'      => $reprendre ? 2 : 1,
+			'retour'      => mb_substr( sanitize_textarea_field( wp_unslash( isset( $_POST['retour'] ) ? $_POST['retour'] : '' ) ), 0, 1000 ), // phpcs:ignore
+			'retour_date' => current_time( 'mysql' ),
+			'retour_lu'   => 0,
+		);
+		if ( $reprendre ) {
+			$etat = $l['etat'] ? json_decode( $l['etat'], true ) : array();
+			if ( is_array( $etat ) ) {
+				$etat['fini']     = 0;
+				$etat['autoeval'] = '';
+				$etat['maj']      = (int) round( microtime( true ) * 1000 ); // plus récent que la copie du téléphone
+				$maj['etat']      = wp_json_encode( $etat );
+			}
+			$maj['fini']     = 0;
+			$maj['autoeval'] = '';
+		}
+		global $wpdb;
+		$wpdb->update( nr_table(), $maj, array( 'id' => (int) $l['id'] ) );
+	}
+	wp_safe_redirect( nr_url_admin( 'nos-reussites', array( 'activite' => $act, 'retour' => 1 ) ) );
+	exit;
+}
 
 function nr_supprimer_voix( $json ) {
 	foreach ( (array) json_decode( (string) $json, true ) as $f ) {
@@ -394,7 +530,7 @@ function nr_post_csv() {
 	header( 'Content-Disposition: attachment; filename="activite-' . $act . '-resultats.csv"' );
 	$out = fopen( 'php://output', 'w' );
 	fwrite( $out, "\xEF\xBB\xBF" );
-	fputcsv( $out, array( 'Prénom', 'Parcours', 'Écran atteint', 'Écrans', 'Réussis', 'Items', 'Réussite (%)', 'Fini', 'Ressenti', 'Début', 'Dernière activité' ), ';' );
+	fputcsv( $out, array( 'Prénom', 'Parcours', 'Écran atteint', 'Écrans', 'Réussis', 'Items', 'Réussite (%)', 'Fini', 'Ressenti', 'Enseignant', 'Retour', 'Début', 'Dernière activité' ), ';' );
 	$ress = array( 'ok' => 'je sais faire', 'moy' => 'un peu', 'pas' => 'pas encore' );
 	foreach ( $rows as $l ) {
 		fputcsv(
@@ -402,7 +538,7 @@ function nr_post_csv() {
 			array(
 				$l['prenom'], $l['parcours'], (int) $l['ecran'] + 1, nr_nb_ecrans( $a, $l['parcours'] ), $l['score_ok'], $l['score_total'],
 				$l['score_total'] ? round( 100 * $l['score_ok'] / $l['score_total'] ) : 0, $l['fini'] ? 'oui' : 'non',
-				isset( $ress[ $l['autoeval'] ] ) ? $ress[ $l['autoeval'] ] : '', $l['debut'], $l['maj'],
+				isset( $ress[ $l['autoeval'] ] ) ? $ress[ $l['autoeval'] ] : '', wp_strip_all_tags( nr_etat_enseignant( $l ) ), (string) $l['retour'], $l['debut'], $l['maj'],
 			),
 			';'
 		);

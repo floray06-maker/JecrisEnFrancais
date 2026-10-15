@@ -1,0 +1,755 @@
+{
+ "id": "13",
+ "titre": "Activité 13",
+ "duree": "1 h 30",
+ "parcours": {
+  "1": {
+   "titre": "J'écris mon adresse.",
+   "ecrans": [
+    {
+     "id": "chiffres",
+     "num": 1,
+     "icone": "coche",
+     "type": "choix",
+     "forme": "lettres",
+     "consigne": "Je coche le même nombre.",
+     "items": [
+      {
+       "modele": "12",
+       "options": [
+        "12",
+        "21",
+        "2",
+        "11"
+       ],
+       "bonne": 0,
+       "exemple": true
+      },
+      {
+       "modele": "31",
+       "options": [
+        "13",
+        "31",
+        "3",
+        "38"
+       ],
+       "bonne": 1
+      },
+      {
+       "modele": "6",
+       "options": [
+        "9",
+        "8",
+        "6",
+        "0"
+       ],
+       "bonne": 2
+      },
+      {
+       "modele": "45",
+       "options": [
+        "54",
+        "4",
+        "40",
+        "45"
+       ],
+       "bonne": 3
+      },
+      {
+       "modele": "17",
+       "options": [
+        "17",
+        "71",
+        "7",
+        "11"
+       ],
+       "bonne": 0
+      },
+      {
+       "modele": "37000",
+       "options": [
+        "37000",
+        "73000",
+        "3700",
+        "37600"
+       ],
+       "bonne": 0
+      }
+     ]
+    },
+    {
+     "id": "meme_mot",
+     "num": 2,
+     "icone": "coche",
+     "type": "multi",
+     "consigne": "Je coche le même mot.",
+     "items": [
+      {
+       "modele": "RUE",
+       "options": [
+        "RUE",
+        "RU",
+        "RUE",
+        "UER"
+       ],
+       "bonnes": [
+        0,
+        2
+       ],
+       "exemple": true
+      },
+      {
+       "modele": "TOURS",
+       "options": [
+        "TOUR",
+        "TOURS",
+        "TOURS",
+        "TROUS"
+       ],
+       "bonnes": [
+        1,
+        2
+       ]
+      },
+      {
+       "modele": "AVENUE",
+       "options": [
+        "AVENUE",
+        "AVENIR",
+        "AVENUE",
+        "VENUE"
+       ],
+       "bonnes": [
+        0,
+        2
+       ]
+      },
+      {
+       "modele": "PLACE",
+       "options": [
+        "PALCE",
+        "PLACE",
+        "PLAGE",
+        "PLACE"
+       ],
+       "bonnes": [
+        1,
+        3
+       ]
+      },
+      {
+       "modele": "VILLE",
+       "options": [
+        "VILLE",
+        "VILLE",
+        "VIELLE",
+        "VILE"
+       ],
+       "bonnes": [
+        0,
+        1
+       ]
+      },
+      {
+       "modele": "NUMÉRO",
+       "options": [
+        "NUMÉRO",
+        "MUNÉRO",
+        "NUMÉRO",
+        "NOMBRE"
+       ],
+       "bonnes": [
+        0,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "id": "minuscules",
+     "num": 3,
+     "icone": "ecris",
+     "type": "saisie",
+     "casse": true,
+     "clavier": "min",
+     "consigne": "Je lis. J'écris le mot en minuscules.",
+     "items": [
+      {
+       "gauche": "RUE",
+       "reponses": [
+        "rue"
+       ],
+       "exemple": true
+      },
+      {
+       "gauche": "AVENUE",
+       "reponses": [
+        "avenue"
+       ]
+      },
+      {
+       "gauche": "PLACE",
+       "reponses": [
+        "place"
+       ]
+      },
+      {
+       "gauche": "VILLE",
+       "reponses": [
+        "ville"
+       ]
+      },
+      {
+       "gauche": "PORTE",
+       "reponses": [
+        "porte"
+       ]
+      },
+      {
+       "gauche": "LYCÉE",
+       "reponses": [
+        "lycée"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "syllabes",
+     "num": 4,
+     "icone": "lis",
+     "type": "saisie",
+     "clavier": "min",
+     "syllabes": true,
+     "consigne": "Je lis les syllabes. J'écris le mot.",
+     "items": [
+      {
+       "gauche": "a   ve   nue",
+       "reponses": [
+        "avenue"
+       ],
+       "exemple": true
+      },
+      {
+       "gauche": "nu   mé   ro",
+       "reponses": [
+        "numéro",
+        "numero"
+       ]
+      },
+      {
+       "gauche": "a   dres   se",
+       "reponses": [
+        "adresse"
+       ]
+      },
+      {
+       "gauche": "ma   ga   sin",
+       "reponses": [
+        "magasin"
+       ]
+      },
+      {
+       "gauche": "té   lé   pho   ne",
+       "reponses": [
+        "téléphone",
+        "telephone"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "enveloppe",
+     "num": 5,
+     "icone": "lis",
+     "type": "choix",
+     "forme": "ligne",
+     "consigne": "Je lis l'adresse. Je coche.",
+     "support": {
+      "message": {
+       "de": "Lina FERRAND",
+       "heure": "",
+       "texte": "12 rue Victor Hugo. 37000 TOURS."
+      }
+     },
+     "items": [
+      {
+       "texte": "Le prénom, c'est …",
+       "options": [
+        "Lina",
+        "Ferrand",
+        "Victor"
+       ],
+       "bonne": 0,
+       "exemple": true
+      },
+      {
+       "texte": "Le nom, c'est …",
+       "options": [
+        "Hugo",
+        "FERRAND",
+        "TOURS"
+       ],
+       "bonne": 1
+      },
+      {
+       "texte": "Le numéro, c'est …",
+       "options": [
+        "37000",
+        "21",
+        "12"
+       ],
+       "bonne": 2
+      },
+      {
+       "texte": "La rue, c'est …",
+       "options": [
+        "rue Victor Hugo",
+        "rue de Tours",
+        "rue Lina"
+       ],
+       "bonne": 0
+      },
+      {
+       "texte": "La ville, c'est …",
+       "options": [
+        "Paris",
+        "TOURS",
+        "Hugo"
+       ],
+       "bonne": 1
+      }
+     ]
+    },
+    {
+     "id": "carte_modele",
+     "num": 6,
+     "icone": "ecris",
+     "type": "saisie",
+     "clavier": "phrase",
+     "consigne": "Je recopie l'adresse de Lina.",
+     "items": [
+      {
+       "gauche": "12 RUE VICTOR HUGO",
+       "reponses": [
+        "12 rue Victor Hugo"
+       ]
+      },
+      {
+       "gauche": "37000 TOURS",
+       "reponses": [
+        "37000 Tours"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "carte",
+     "num": 7,
+     "icone": "ecris",
+     "type": "carte",
+     "consigne": "J'écris mon adresse.",
+     "modele": {
+      "titre": "MON ADRESSE",
+      "valeurs": [
+       "12",
+       "rue Victor Hugo",
+       "TOURS"
+      ]
+     },
+     "champs": [
+      {
+       "cle": "numero",
+       "label": "Numéro",
+       "clavier": "min"
+      },
+      {
+       "cle": "rue",
+       "label": "Rue",
+       "clavier": "mot"
+      },
+      {
+       "cle": "ville",
+       "label": "Ville",
+       "clavier": "maj"
+      }
+     ]
+    },
+    {
+     "id": "oral",
+     "num": 8,
+     "icone": "micro",
+     "type": "oral",
+     "consigne": "Je lis à voix haute. Je m'enregistre.",
+     "mots": [
+      "RUE",
+      "AVENUE",
+      "PLACE",
+      "VILLE",
+      "TOURS",
+      "NUMÉRO",
+      "ADRESSE",
+      "LYCÉE"
+     ],
+     "enplus": [
+      "Lina habite à Tours.",
+      "Lina habite rue Victor Hugo.",
+      "J'habite à Tours."
+     ]
+    },
+    {
+     "id": "fin",
+     "type": "fin"
+    }
+   ]
+  },
+  "2": {
+   "titre": "J'écris à mon tuteur de stage.",
+   "ecrans": [
+    {
+     "id": "messages",
+     "num": 1,
+     "icone": "lis",
+     "type": "choix",
+     "forme": "vf",
+     "consigne": "Je lis le message. Vrai ou faux ? Je coche.",
+     "support": {
+      "message": {
+       "de": "Lina",
+       "heure": "07:40",
+       "texte": "Bonjour Monsieur Diallo. Je suis malade. Je ne peux pas venir au magasin aujourd'hui. Je vais chez le médecin. Je reviens demain. Excusez-moi. Lina Ferrand"
+      }
+     },
+     "items": [
+      {
+       "texte": "Lina écrit à M. Diallo.",
+       "options": [
+        "vrai",
+        "faux"
+       ],
+       "bonne": 0,
+       "exemple": true
+      },
+      {
+       "texte": "Lina est malade.",
+       "options": [
+        "vrai",
+        "faux"
+       ],
+       "bonne": 0
+      },
+      {
+       "texte": "Lina va au magasin aujourd'hui.",
+       "options": [
+        "vrai",
+        "faux"
+       ],
+       "bonne": 1
+      },
+      {
+       "texte": "Lina va chez le médecin.",
+       "options": [
+        "vrai",
+        "faux"
+       ],
+       "bonne": 0
+      },
+      {
+       "texte": "Lina revient lundi.",
+       "options": [
+        "vrai",
+        "faux"
+       ],
+       "bonne": 1
+      }
+     ]
+    },
+    {
+     "id": "formules",
+     "num": 2,
+     "icone": "coche",
+     "type": "choix",
+     "forme": "ligne",
+     "consigne": "J'écris à mon tuteur. Je coche la bonne formule.",
+     "items": [
+      {
+       "texte": "Pour commencer : ___",
+       "options": [
+        "Bonjour Monsieur",
+        "Salut !",
+        "Coucou"
+       ],
+       "bonne": 0,
+       "exemple": true
+      },
+      {
+       "texte": "Pour finir : ___",
+       "options": [
+        "Bisous",
+        "Cordialement",
+        "À plus"
+       ],
+       "bonne": 1
+      },
+      {
+       "texte": "Je suis en retard : ___",
+       "options": [
+        "Excusez-moi.",
+        "C'est pas grave.",
+        "Tant pis."
+       ],
+       "bonne": 0
+      },
+      {
+       "texte": "Je dis tu ou vous à mon tuteur ? ___",
+       "options": [
+        "tu",
+        "vous"
+       ],
+       "bonne": 1
+      },
+      {
+       "texte": "Pour signer : ___",
+       "options": [
+        "Lina",
+        "Lina Ferrand",
+        "L."
+       ],
+       "bonne": 1
+      }
+     ]
+    },
+    {
+     "id": "negation",
+     "num": 3,
+     "icone": "ecris",
+     "type": "saisie",
+     "clavier": "phrase",
+     "consigne": "J'écris la phrase avec ne … pas.",
+     "items": [
+      {
+       "gauche": "Je peux venir.",
+       "prefixe": "Je",
+       "reponses": [
+        "ne peux pas venir"
+       ],
+       "exemple": true
+      },
+      {
+       "gauche": "Je suis à l'heure.",
+       "prefixe": "Je",
+       "reponses": [
+        "ne suis pas à l'heure"
+       ]
+      },
+      {
+       "gauche": "Je travaille aujourd'hui.",
+       "prefixe": "Je",
+       "reponses": [
+        "ne travaille pas aujourd'hui"
+       ]
+      },
+      {
+       "gauche": "Le bus passe.",
+       "prefixe": "Le bus",
+       "reponses": [
+        "ne passe pas"
+       ]
+      },
+      {
+       "gauche": "Je trouve le magasin.",
+       "prefixe": "Je",
+       "reponses": [
+        "ne trouve pas le magasin"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "raisons",
+     "num": 4,
+     "icone": "coche",
+     "type": "choix",
+     "forme": "ligne",
+     "consigne": "Parce que … Je coche la bonne raison.",
+     "items": [
+      {
+       "texte": "Je suis en retard parce que ___",
+       "options": [
+        "le bus est en retard.",
+        "j'aime le bus.",
+        "le bus est bleu."
+       ],
+       "bonne": 0,
+       "exemple": true
+      },
+      {
+       "texte": "Je ne viens pas parce que ___",
+       "options": [
+        "je suis content.",
+        "je suis malade.",
+        "je suis grand."
+       ],
+       "bonne": 1
+      },
+      {
+       "texte": "Je pars à 16 heures parce que ___",
+       "options": [
+        "j'ai faim.",
+        "il fait beau.",
+        "j'ai un rendez-vous au lycée."
+       ],
+       "bonne": 2
+      },
+      {
+       "texte": "J'arrive à 10 heures parce que ___",
+       "options": [
+        "je vais à la préfecture.",
+        "je dors.",
+        "je mange une pomme."
+       ],
+       "bonne": 0
+      }
+     ]
+    },
+    {
+     "id": "sms",
+     "num": 5,
+     "icone": "coche",
+     "type": "choix",
+     "forme": "ligne",
+     "consigne": "Je complète le message d'Awa. Je coche.",
+     "items": [
+      {
+       "texte": "___ Madame Faure.",
+       "options": [
+        "Bonjour",
+        "Salut",
+        "Bisous"
+       ],
+       "bonne": 0,
+       "exemple": true
+      },
+      {
+       "texte": "Je suis ___ de 20 minutes",
+       "options": [
+        "malade",
+        "en retard",
+        "content"
+       ],
+       "bonne": 1
+      },
+      {
+       "texte": "___ le bus ne passe pas.",
+       "options": [
+        "mais",
+        "et",
+        "parce que"
+       ],
+       "bonne": 2
+      },
+      {
+       "texte": "J'arrive ___ 9 heures 20.",
+       "options": [
+        "à",
+        "de",
+        "le"
+       ],
+       "bonne": 0
+      },
+      {
+       "texte": "___. Cordialement, Awa Koné",
+       "options": [
+        "Excusez-moi",
+        "Tant pis",
+        "À plus"
+       ],
+       "bonne": 0
+      }
+     ]
+    },
+    {
+     "id": "reponse_tuteur",
+     "num": 6,
+     "icone": "lis",
+     "type": "choix",
+     "forme": "ligne",
+     "consigne": "Je lis la réponse. Je coche la bonne réponse.",
+     "support": {
+      "message": {
+       "de": "M. Diallo",
+       "heure": "08:02",
+       "texte": "Bonjour Lina. Merci pour le message. Repose-toi bien. Apporte le certificat du médecin demain. À demain, 9 heures."
+      }
+     },
+     "items": [
+      {
+       "texte": "M. Diallo répond à …",
+       "options": [
+        "Lina",
+        "Awa",
+        "Mme Faure"
+       ],
+       "bonne": 0,
+       "exemple": true
+      },
+      {
+       "texte": "Lina apporte …",
+       "options": [
+        "un gâteau",
+        "le certificat du médecin",
+        "son stylo"
+       ],
+       "bonne": 1
+      },
+      {
+       "texte": "Lina revient …",
+       "options": [
+        "lundi",
+        "ce soir",
+        "demain"
+       ],
+       "bonne": 2
+      },
+      {
+       "texte": "Lina commence à …",
+       "options": [
+        "9 heures",
+        "8 heures",
+        "10 heures"
+       ],
+       "bonne": 0
+      }
+     ]
+    },
+    {
+     "id": "redaction",
+     "num": 7,
+     "icone": "ecris",
+     "type": "redaction",
+     "consigne": "Je suis en retard. J'écris à mon tuteur.",
+     "cadres": [
+      "Bonjour Monsieur … / Madame …",
+      "Je suis en retard de … minutes.",
+      "parce que …",
+      "J'arrive à … heures.",
+      "Excusez-moi. Cordialement, (prénom NOM)"
+     ]
+    },
+    {
+     "id": "oral",
+     "num": 8,
+     "icone": "micro",
+     "type": "oral",
+     "consigne": "Je lis à voix haute. Je m'enregistre.",
+     "texte": "Bonjour Monsieur Diallo. Je suis malade. Je ne peux pas venir au magasin aujourd'hui. Je vais chez le médecin. Je reviens demain. Excusez-moi. Lina Ferrand",
+     "pauses": true,
+     "enplus_oral": "Je téléphone à mon tuteur : je suis en retard, je dis pourquoi."
+    },
+    {
+     "id": "fin",
+     "type": "fin"
+    }
+   ]
+  }
+ }
+}

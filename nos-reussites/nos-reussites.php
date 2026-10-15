@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Nos réussites. Activités UPE2A
- * Description:       Activités en autonomie sur téléphone pour les élèves allophones (UPE2A NSA). L'élève entre son prénom ; le prénom choisit le parcours. Réponses et lectures enregistrées pour l'enseignant.
- * Version:           1.0.0
+ * Description:       Activités en autonomie sur téléphone pour les élèves allophones (UPE2A NSA). L'élève entre son prénom ; le prénom choisit le parcours. Réponses et lectures enregistrées pour l'enseignant, qui diffuse l'activité du jour, valide le travail et envoie un retour lu à l'élève.
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            M. Kongolo
@@ -14,7 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'NR_VERSION', '1.0.0' );
+define( 'NR_VERSION', '1.1.0' );
+define( 'NR_DB', '2' );
 define( 'NR_DIR', plugin_dir_path( __FILE__ ) );
 define( 'NR_URL', plugin_dir_url( __FILE__ ) );
 define( 'NR_OPT', 'nr_reglages' );
@@ -118,6 +119,49 @@ function nr_proteger_dossier_voix() {
 	}
 }
 
+/* ------------------------------------------------------------------ diffusion */
+
+/** Activités diffusées par l'enseignant, dans l'ordre : array( array( 'id' => '11', 'date' => '2026-10-15' ), … ). La dernière est l'activité du jour. */
+function nr_diffusion() {
+	$d   = get_option( 'nr_diffusion', array() );
+	$out = array();
+	foreach ( is_array( $d ) ? $d : array() as $x ) {
+		if ( is_array( $x ) && isset( $x['id'] ) && nr_activite( $x['id'] ) ) {
+			$out[] = array( 'id' => (string) $x['id'], 'date' => isset( $x['date'] ) ? (string) $x['date'] : '' );
+		}
+	}
+	return $out;
+}
+
+function nr_diffusee( $act ) {
+	foreach ( nr_diffusion() as $x ) {
+		if ( $x['id'] === $act ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * Activité que l'élève doit faire : la première activité diffusée qu'il n'a pas terminée.
+ * Il ne passe pas à la suivante tant qu'il n'a pas fini la précédente. Tout est fini : l'activité du jour.
+ */
+function nr_activite_pour( $cle, $parcours ) {
+	$derniere = '';
+	foreach ( nr_diffusion() as $x ) {
+		$a = nr_activite( $x['id'] );
+		if ( empty( $a['parcours'][ $parcours ] ) ) {
+			continue;
+		}
+		$l = nr_ligne( $x['id'], $cle );
+		if ( ! $l || ! (int) $l['fini'] ) {
+			return $x['id'];
+		}
+		$derniere = $x['id'];
+	}
+	return $derniere;
+}
+
 /* ------------------------------------------------------------------ activation */
 
 register_activation_hook( __FILE__, 'nr_activation' );
@@ -136,6 +180,10 @@ function nr_activation() {
 		ecran smallint(5) unsigned NOT NULL DEFAULT 0,
 		fini tinyint(1) NOT NULL DEFAULT 0,
 		autoeval varchar(10) NOT NULL DEFAULT '',
+		valide tinyint(1) NOT NULL DEFAULT 0,
+		retour longtext NULL,
+		retour_date datetime NULL,
+		retour_lu tinyint(1) NOT NULL DEFAULT 0,
 		score_ok smallint(5) unsigned NOT NULL DEFAULT 0,
 		score_total smallint(5) unsigned NOT NULL DEFAULT 0,
 		debut datetime NULL,
@@ -148,7 +196,16 @@ function nr_activation() {
 		add_option( NR_OPT, array( 'p1' => '', 'p2' => '', 'voix' => 1 ) );
 	}
 	nr_proteger_dossier_voix();
-	nr_creer_page( '10' );
+	nr_creer_page( 'jour' );
+	update_option( 'nr_db', NR_DB, false );
+}
+
+/* Mise à jour de l'extension sans réactivation : nouvelles colonnes, page « Activité du jour ». */
+add_action( 'plugins_loaded', 'nr_mise_a_jour' );
+function nr_mise_a_jour() {
+	if ( NR_DB !== get_option( 'nr_db' ) ) {
+		nr_activation();
+	}
 }
 
 /** Crée la page de l'activité si elle n'existe pas encore. */
@@ -160,8 +217,8 @@ function nr_creer_page( $activite ) {
 	}
 	$id = wp_insert_post(
 		array(
-			'post_title'   => 'Activité ' . $activite,
-			'post_name'    => 'activite-' . $activite,
+			'post_title'   => 'jour' === $activite ? 'Activité du jour' : 'Activité ' . $activite,
+			'post_name'    => 'jour' === $activite ? 'activite-du-jour' : 'activite-' . $activite,
 			'post_content' => '[nos_reussites activite="' . $activite . '"]',
 			'post_status'  => 'publish',
 			'post_type'    => 'page',
@@ -188,13 +245,18 @@ function nr_activite_de_la_page() {
 	if ( preg_match( '/\[nos_reussites[^\]]*activite=["\']?([a-z0-9\-]+)/i', $post->post_content, $m ) ) {
 		return $m[1];
 	}
-	return '10';
+	return 'jour';
+}
+
+/** « jour » désigne la page unique de l'activité du jour ; les anciennes pages par activité restent valables. */
+function nr_page_valide( $act ) {
+	return 'jour' === $act || (bool) nr_activite( $act );
 }
 
 add_filter( 'template_include', 'nr_template', 99 );
 function nr_template( $template ) {
 	$act = nr_activite_de_la_page();
-	if ( $act && nr_activite( $act ) ) {
+	if ( $act && nr_page_valide( $act ) ) {
 		$GLOBALS['nr_activite_courante'] = $act;
 		nocache_headers();
 		return NR_DIR . 'templates/app.php';
@@ -213,9 +275,9 @@ function nr_config_js( $act ) {
 /* Repli : si un constructeur de pages ignore le gabarit, le code court affiche l'application en plein écran. */
 add_shortcode( 'nos_reussites', 'nr_shortcode' );
 function nr_shortcode( $atts ) {
-	$atts = shortcode_atts( array( 'activite' => '10' ), $atts, 'nos_reussites' );
+	$atts = shortcode_atts( array( 'activite' => 'jour' ), $atts, 'nos_reussites' );
 	$act  = preg_replace( '/[^a-z0-9\-]/', '', strtolower( $atts['activite'] ) );
-	if ( ! nr_activite( $act ) ) {
+	if ( ! nr_page_valide( $act ) ) {
 		return '';
 	}
 	wp_enqueue_style( 'nr-app', NR_URL . 'assets/app.css', array(), NR_VERSION );
@@ -228,7 +290,7 @@ function nr_shortcode( $atts ) {
 
 add_action( 'rest_api_init', 'nr_routes' );
 function nr_routes() {
-	foreach ( array( 'login', 'save', 'audio' ) as $r ) {
+	foreach ( array( 'login', 'save', 'audio', 'lu' ) as $r ) {
 		register_rest_route(
 			NR_NS,
 			'/' . $r,
@@ -266,18 +328,22 @@ function nr_ligne( $activite, $cle ) {
 }
 
 function nr_rest_login( WP_REST_Request $req ) {
-	$act = preg_replace( '/[^a-z0-9\-]/', '', strtolower( (string) $req->get_param( 'activite' ) ) );
-	$a   = nr_activite( $act );
 	$cle = nr_cle( $req->get_param( 'prenom' ) );
 	$el  = nr_eleves();
-	if ( ! $a || '' === $cle || ! isset( $el[ $cle ] ) || empty( $a['parcours'][ $el[ $cle ]['parcours'] ] ) ) {
+	if ( '' === $cle || ! isset( $el[ $cle ] ) ) {
 		if ( ! nr_limite() ) {
 			return nr_reponse( array( 'ok' => false, 'raison' => 'limite' ), 429 );
 		}
 		nr_echec();
 		return nr_reponse( array( 'ok' => false ) );
 	}
-	$e = $el[ $cle ];
+	$e       = $el[ $cle ];
+	$retours = nr_retours_non_lus( $cle );
+	$act     = nr_activite_pour( $cle, $e['parcours'] );
+	if ( '' === $act ) {
+		return nr_reponse( array( 'ok' => false, 'raison' => 'aucune', 'prenom' => $e['prenom'], 'cle' => $cle, 'retours' => $retours ) );
+	}
+	$a = nr_activite( $act );
 	$p = $a['parcours'][ $e['parcours'] ];
 	global $wpdb;
 	$ligne = nr_ligne( $act, $cle );
@@ -302,6 +368,7 @@ function nr_rest_login( WP_REST_Request $req ) {
 	return nr_reponse(
 		array(
 			'ok'       => true,
+			'activite' => $act,
 			'prenom'   => $e['prenom'],
 			'cle'      => $cle,
 			'jeton'    => nr_jeton( $cle, $act ),
@@ -313,9 +380,41 @@ function nr_rest_login( WP_REST_Request $req ) {
 				'ecrans' => $p['ecrans'],
 			),
 			'etat'     => $etat,
+			'valide'   => $ligne ? (int) $ligne['valide'] : 0,
+			'retours'  => $retours,
 			'gen'      => $ligne ? $ligne['id'] . '-' . $e['parcours'] : '',
 		)
 	);
+}
+
+/** Retours de l'enseignant que l'élève n'a pas encore écoutés, toutes activités confondues. */
+function nr_retours_non_lus( $cle ) {
+	global $wpdb;
+	$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT activite, valide, retour FROM ' . nr_table() . ' WHERE cle = %s AND valide > 0 AND retour_lu = 0 ORDER BY retour_date', $cle ), ARRAY_A ); // phpcs:ignore
+	$out  = array();
+	foreach ( (array) $rows as $l ) {
+		$a     = nr_activite( $l['activite'] );
+		$out[] = array(
+			'activite' => $l['activite'],
+			'titre'    => isset( $a['titre'] ) ? $a['titre'] : $l['activite'],
+			'valide'   => (int) $l['valide'],
+			'texte'    => (string) $l['retour'],
+			'jeton'    => nr_jeton( $cle, $l['activite'] ),
+		);
+	}
+	return $out;
+}
+
+/** L'élève a écouté le retour de l'enseignant. */
+function nr_rest_lu( WP_REST_Request $req ) {
+	$act = preg_replace( '/[^a-z0-9\-]/', '', strtolower( (string) $req->get_param( 'activite' ) ) );
+	$cle = nr_cle( $req->get_param( 'cle' ) );
+	if ( '' === $cle || ! nr_activite( $act ) || ! hash_equals( nr_jeton( $cle, $act ), (string) $req->get_param( 'jeton' ) ) ) {
+		return nr_reponse( array( 'ok' => false ), 403 );
+	}
+	global $wpdb;
+	$wpdb->update( nr_table(), array( 'retour_lu' => 1 ), array( 'activite' => $act, 'cle' => $cle ) );
+	return nr_reponse( array( 'ok' => true ) );
 }
 
 /** Vérifie l'élève et son jeton ; renvoie array( activite, cle, élève, activité ) ou null. */
@@ -325,7 +424,7 @@ function nr_verifier( WP_REST_Request $req ) {
 	$jet = (string) $req->get_param( 'jeton' );
 	$a   = nr_activite( $act );
 	$el  = nr_eleves();
-	if ( ! $a || '' === $cle || ! isset( $el[ $cle ] ) || ! hash_equals( nr_jeton( $cle, $act ), $jet ) ) {
+	if ( ! $a || ! nr_diffusee( $act ) || '' === $cle || ! isset( $el[ $cle ] ) || ! hash_equals( nr_jeton( $cle, $act ), $jet ) ) {
 		return null;
 	}
 	return array( $act, $cle, $el[ $cle ], $a );
@@ -454,10 +553,16 @@ function nr_rest_save( WP_REST_Request $req ) {
 	if ( ! nr_ligne( $act, $cle ) ) {
 		$wpdb->insert( nr_table(), array( 'activite' => $act, 'cle' => $cle, 'prenom' => $eleve['prenom'], 'parcours' => $eleve['parcours'], 'debut' => current_time( 'mysql' ) ) );
 	}
-	$auto = $etat['autoeval'];
+	$auto   = $etat['autoeval'];
+	$ligne  = nr_ligne( $act, $cle );
+	$valide = (int) $ligne['valide'];
+	if ( 2 === $valide && ! empty( $etat['fini'] ) ) {
+		$valide = 0; // activité à reprendre, rendue de nouveau : l'enseignant la revoit
+	}
 	$wpdb->update(
 		nr_table(),
 		array(
+			'valide'      => $valide,
 			'etat'        => $json,
 			'ecran'       => isset( $etat['ecran'] ) ? max( 0, min( 999, (int) $etat['ecran'] ) ) : 0,
 			'fini'        => empty( $etat['fini'] ) ? 0 : 1,

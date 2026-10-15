@@ -184,3 +184,16 @@ html, body.nr-page { margin: 0; padding: 0; background: var(--fond); }
 @keyframes nr-secoue { 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
 @media (prefers-reduced-motion: reduce) { .nr-secoue, .nr-rec-btn.nr-rec-on { animation: none; } }
 @media (max-width: 370px) { #nr-app { font-size: 18px; } .nr-forme-lettres .nr-opt span:first-child { font-size: 28px; } .nr-opt-mot span:first-child { font-size: 13px; } }
+
+/* activité obligatoire : bouton suivant bloqué, éléments à faire signalés */
+.nr-suivant.nr-bloque { background: #9a9a9a; box-shadow: none; }
+.nr-suivant.nr-attente { opacity: .5; }
+.nr-manque { animation: nr-manque 1.6s ease-out; }
+@keyframes nr-manque { 0%, 60% { box-shadow: 0 0 0 4px var(--orange); background: #fff1e0; } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+/* retour du professeur */
+.nr-retour-etat { width: 72px; }
+.nr-retour-txt { font-size: 24px; line-height: 1.45; text-align: left; max-width: 460px; padding: 14px 16px; border: 2px solid var(--encre); border-radius: 14px; background: var(--doux); white-space: pre-wrap; }
+.nr-retour-ok { width: 72px; height: 72px; padding: 16px; border-radius: 50%; }
+.nr-attente-prof { display: flex; align-items: center; gap: 10px; margin-top: 18px; font-size: 20px; color: var(--gris); }
+.nr-attente-prof img { width: 40px; }

@@ -1,0 +1,194 @@
+{
+  "id": "11",
+  "titre": "Activité 11",
+  "duree": "1 h 30",
+  "parcours": {
+    "1": {
+      "titre": "Je lis les jours de la semaine.",
+      "ecrans": [
+        {
+          "id": "jours_lettre", "num": 1, "icone": "coche", "type": "choix", "forme": "lettres",
+          "consigne": "Je coche la même lettre.",
+          "items": [
+            {"modele": "L", "options": ["l", "i", "t", "f"], "bonne": 0, "exemple": true},
+            {"modele": "J", "options": ["i", "g", "j", "y"], "bonne": 2},
+            {"modele": "V", "options": ["u", "v", "w", "y"], "bonne": 1},
+            {"modele": "D", "options": ["b", "p", "q", "d"], "bonne": 3},
+            {"modele": "H", "options": ["h", "n", "k", "b"], "bonne": 0},
+            {"modele": "B", "options": ["d", "p", "b", "q"], "bonne": 2},
+            {"modele": "C", "options": ["e", "o", "a", "c"], "bonne": 3}
+          ]
+        },
+        {
+          "id": "meme_jour", "num": 2, "icone": "coche", "type": "multi",
+          "consigne": "Je coche le même mot.",
+          "items": [
+            {"modele": "LUNDI", "options": ["LUNDI", "MARDI", "LUNDI", "JEUDI"], "bonnes": [0, 2], "exemple": true},
+            {"modele": "MARDI", "options": ["MIDI", "MARDI", "MARDI", "SAMEDI"], "bonnes": [1, 2]},
+            {"modele": "JEUDI", "options": ["JEUDI", "LUNDI", "VENDREDI", "JEUDI"], "bonnes": [0, 3]},
+            {"modele": "SAMEDI", "options": ["SAMEDI", "MARDI", "SAMEDI", "MIDI"], "bonnes": [0, 2]},
+            {"modele": "DIMANCHE", "options": ["DIMANCHE", "DIMANCHE", "MANCHE", "DIMANDE"], "bonnes": [0, 1]},
+            {"modele": "MERCREDI", "options": ["MARDI", "MERCREDI", "VENDREDI", "MERCREDI"], "bonnes": [1, 3]}
+          ]
+        },
+        {
+          "id": "minuscules", "num": 3, "icone": "ecris", "type": "saisie", "casse": true, "clavier": "min",
+          "consigne": "Je lis. J'écris le jour en minuscules.",
+          "items": [
+            {"gauche": "LUNDI", "reponses": ["lundi"], "exemple": true},
+            {"gauche": "MARDI", "reponses": ["mardi"]},
+            {"gauche": "MERCREDI", "reponses": ["mercredi"]},
+            {"gauche": "JEUDI", "reponses": ["jeudi"]},
+            {"gauche": "VENDREDI", "reponses": ["vendredi"]},
+            {"gauche": "SAMEDI", "reponses": ["samedi"]},
+            {"gauche": "DIMANCHE", "reponses": ["dimanche"]}
+          ]
+        },
+        {
+          "id": "syllabes", "num": 4, "icone": "lis", "type": "saisie", "clavier": "min", "syllabes": true,
+          "consigne": "Je lis les syllabes. J'écris le mot.",
+          "items": [
+            {"gauche": "lun   di", "reponses": ["lundi"], "exemple": true},
+            {"gauche": "jeu   di", "reponses": ["jeudi"]},
+            {"gauche": "sa   me   di", "reponses": ["samedi"]},
+            {"gauche": "ven   dre   di", "reponses": ["vendredi"]},
+            {"gauche": "di   man   che", "reponses": ["dimanche"]},
+            {"gauche": "mer   cre   di", "reponses": ["mercredi"]}
+          ]
+        },
+        {
+          "id": "apres", "num": 5, "icone": "coche", "type": "choix", "forme": "ligne",
+          "consigne": "Je coche le jour après.",
+          "items": [
+            {"texte": "lundi, ___", "options": ["mardi", "jeudi", "dimanche"], "bonne": 0, "exemple": true},
+            {"texte": "mardi, ___", "options": ["lundi", "mercredi", "samedi"], "bonne": 1},
+            {"texte": "mercredi, ___", "options": ["vendredi", "mardi", "jeudi"], "bonne": 2},
+            {"texte": "jeudi, ___", "options": ["vendredi", "lundi", "mercredi"], "bonne": 0},
+            {"texte": "vendredi, ___", "options": ["jeudi", "samedi", "mardi"], "bonne": 1},
+            {"texte": "samedi, ___", "options": ["lundi", "vendredi", "dimanche"], "bonne": 2}
+          ]
+        },
+        {
+          "id": "heures", "num": 6, "icone": "lis", "type": "choix", "forme": "ligne",
+          "consigne": "Je lis l'heure. Je coche.",
+          "items": [
+            {"texte": "8 h", "options": ["8 heures", "9 heures", "18 heures"], "bonne": 0, "exemple": true},
+            {"texte": "9 h", "options": ["19 heures", "9 heures", "6 heures"], "bonne": 1},
+            {"texte": "12 h", "options": ["2 heures", "21 heures", "12 heures"], "bonne": 2},
+            {"texte": "14 h", "options": ["14 heures", "4 heures", "16 heures"], "bonne": 0},
+            {"texte": "17 h", "options": ["7 heures", "17 heures", "11 heures"], "bonne": 1},
+            {"texte": "10 h", "options": ["1 heure", "12 heures", "10 heures"], "bonne": 2}
+          ]
+        },
+        {
+          "id": "carte", "num": 7, "icone": "ecris", "type": "carte",
+          "consigne": "Je complète ma fiche.",
+          "modele": {"titre": "LP VICTOR LALOUX", "valeurs": ["Lina", "lundi", "8 heures"]},
+          "champs": [
+            {"cle": "prenom", "label": "Prénom", "clavier": "mot"},
+            {"cle": "jour", "label": "Jour", "clavier": "min"},
+            {"cle": "heure", "label": "Heure", "clavier": "min"}
+          ]
+        },
+        {
+          "id": "oral", "num": 8, "icone": "micro", "type": "oral",
+          "consigne": "Je lis à voix haute. Je m'enregistre.",
+          "mots": ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE", "MIDI"],
+          "enplus": ["Lundi, je suis au lycée.", "Mardi, je suis au lycée.", "Dimanche, je suis à la maison."]
+        },
+        {"id": "fin", "type": "fin"}
+      ]
+    },
+    "2": {
+      "titre": "Je dis mon emploi du temps.",
+      "ecrans": [
+        {
+          "id": "planning", "num": 1, "icone": "lis", "type": "choix", "forme": "vf",
+          "consigne": "Je lis le planning. Vrai ou faux ? Je coche.",
+          "support": {"message": {"de": "Planning de stage de Lina", "heure": "Semaine 43", "texte": "Lundi : 9 h - 12 h et 14 h - 17 h. Mardi : 9 h - 12 h et 14 h - 17 h. Mercredi : 9 h - 12 h. Jeudi : lycée. Vendredi : 9 h - 12 h et 14 h - 16 h."}},
+          "items": [
+            {"texte": "Lundi, Lina commence à 9 heures.", "options": ["vrai", "faux"], "bonne": 0, "exemple": true},
+            {"texte": "Mercredi, Lina finit à 12 heures.", "options": ["vrai", "faux"], "bonne": 0},
+            {"texte": "Jeudi, Lina est en stage.", "options": ["vrai", "faux"], "bonne": 1},
+            {"texte": "Vendredi, Lina finit à 17 heures.", "options": ["vrai", "faux"], "bonne": 1},
+            {"texte": "Mardi, Lina mange de 12 heures à 14 heures.", "options": ["vrai", "faux"], "bonne": 0},
+            {"texte": "Lina travaille le samedi.", "options": ["vrai", "faux"], "bonne": 1}
+          ]
+        },
+        {
+          "id": "a_de", "num": 2, "icone": "coche", "type": "choix", "forme": "ligne",
+          "consigne": "À, de ou le ? Je coche.",
+          "items": [
+            {"texte": "Je commence ___ 9 heures.", "options": ["à", "de", "le"], "bonne": 0, "exemple": true},
+            {"texte": "Je travaille ___ 9 heures à 12 heures.", "options": ["à", "de", "le"], "bonne": 1},
+            {"texte": "Je finis ___ 17 heures.", "options": ["à", "de", "le"], "bonne": 0},
+            {"texte": "Je vais au lycée ___ jeudi.", "options": ["à", "de", "le"], "bonne": 2},
+            {"texte": "La pause est ___ 12 heures à 14 heures.", "options": ["à", "de", "le"], "bonne": 1},
+            {"texte": "Je ne travaille pas ___ samedi.", "options": ["à", "de", "le"], "bonne": 2}
+          ]
+        },
+        {
+          "id": "verbes", "num": 3, "icone": "ecris", "type": "saisie", "clavier": "min",
+          "consigne": "Je complète avec le verbe.",
+          "support": {"banque": ["commence", "finis", "travaille", "mange", "vais"]},
+          "items": [
+            {"gauche": "commencer", "prefixe": "Je", "reponses": ["commence"], "exemple": true},
+            {"gauche": "finir", "prefixe": "Je", "reponses": ["finis"]},
+            {"gauche": "travailler", "prefixe": "Je", "reponses": ["travaille"]},
+            {"gauche": "manger", "prefixe": "Je", "reponses": ["mange"]},
+            {"gauche": "aller", "prefixe": "Je", "reponses": ["vais"]}
+          ]
+        },
+        {
+          "id": "heures_ecrire", "num": 4, "icone": "ecris", "type": "saisie", "clavier": "min",
+          "consigne": "Je lis l'heure. J'écris en lettres.",
+          "items": [
+            {"gauche": "8 h", "reponses": ["8 heures", "huit heures"], "exemple": true},
+            {"gauche": "12 h", "reponses": ["12 heures", "midi", "douze heures"]},
+            {"gauche": "9 h 30", "reponses": ["9 heures 30", "9 heures et demie", "neuf heures trente", "neuf heures et demie"]},
+            {"gauche": "14 h", "reponses": ["14 heures", "quatorze heures"]},
+            {"gauche": "17 h 15", "reponses": ["17 heures 15", "dix-sept heures quinze"]}
+          ]
+        },
+        {
+          "id": "ma_semaine", "num": 5, "icone": "ecris", "type": "saisie", "clavier": "phrase",
+          "consigne": "Je lis le planning de Lina. J'écris.",
+          "items": [
+            {"bande": {"nom": "LUNDI", "metier": "stage au magasin", "lieu": "9 h - 17 h", "img": "sac"}, "exemple": true},
+            {"prefixe": "Lundi, je suis", "reponses": ["en stage", "au magasin", "en stage au magasin"], "exemple": true},
+            {"prefixe": "Je commence à", "reponses": ["9 heures"], "exemple": true},
+            {"bande": {"nom": "JEUDI", "metier": "cours", "lieu": "8 h - 16 h", "img": "bloc"}},
+            {"prefixe": "Jeudi, je suis", "reponses": ["au lycée", "en cours", "au lycée Victor Laloux"]},
+            {"prefixe": "Je commence à", "reponses": ["8 heures", "huit heures"]},
+            {"prefixe": "Je finis à", "reponses": ["16 heures", "seize heures"]}
+          ]
+        },
+        {
+          "id": "message", "num": 6, "icone": "lis", "type": "choix", "forme": "ligne",
+          "consigne": "Je lis le message. Je coche la bonne réponse.",
+          "support": {"message": {"de": "M. Diallo", "heure": "08:12", "texte": "Bonjour Lina. Demain, mardi, le magasin ouvre à 10 heures. Tu commences à 10 heures. Tu finis à 18 heures. La pause est de 13 heures à 14 heures. Bonne journée !"}},
+          "items": [
+            {"texte": "Le message est de …", "options": ["M. Diallo", "Awa", "Mme Faure"], "bonne": 0, "exemple": true},
+            {"texte": "Demain, c'est …", "options": ["lundi", "mardi", "jeudi"], "bonne": 1},
+            {"texte": "Lina commence à …", "options": ["9 heures", "13 heures", "10 heures"], "bonne": 2},
+            {"texte": "Lina finit à …", "options": ["18 heures", "17 heures", "14 heures"], "bonne": 0},
+            {"texte": "La pause est de …", "options": ["12 h à 14 h", "13 h à 14 h", "13 h à 15 h"], "bonne": 1}
+          ]
+        },
+        {
+          "id": "reponse", "num": 7, "icone": "ecris", "type": "redaction",
+          "consigne": "J'écris ma semaine.",
+          "cadres": ["Lundi, je suis au lycée / en stage.", "Je commence à … heures.", "Je finis à … heures.", "Mercredi, je …", "Le samedi et le dimanche, je …"]
+        },
+        {
+          "id": "oral", "num": 8, "icone": "micro", "type": "oral",
+          "consigne": "Je lis à voix haute. Je m'enregistre.",
+          "texte": "Bonjour Lina. Demain, mardi, le magasin ouvre à 10 heures. Tu commences à 10 heures. Tu finis à 18 heures. La pause est de 13 heures à 14 heures. Bonne journée !",
+          "pauses": true,
+          "enplus_oral": "Je dis ma journée au lycée : je commence à …, je finis à …"
+        },
+        {"id": "fin", "type": "fin"}
+      ]
+    }
+  }
+}
